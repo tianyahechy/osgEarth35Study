@@ -20,7 +20,8 @@ void COSGObject::InitOSG()
 void COSGObject::InitSceneGraph()
 {
 	mRoot = new osg::Group;
-	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\glider.osg";
+	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\glider.osg";
+	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\heightfield\\tt.ive";
 	osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(strFileName);
 	mRoot->addChild(node);
 }
