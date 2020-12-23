@@ -53,13 +53,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\include;E:\tutorial\osg\000.ISO\35\builder\runtime\osgearth\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>osgd.lib;osgUtild.lib;osgviewerd.lib;osgDBd.lib;OpenThreadsd.lib;osgGAd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\lib;E:\tutorial\osg\000.ISO\35\builder\runtime\osgearth\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>osgd.lib;osgUtild.lib;osgviewerd.lib;osgDBd.lib;OpenThreadsd.lib;osgGAd.lib;osgEarthd.lib;osgEarthUtild.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

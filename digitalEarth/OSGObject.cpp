@@ -16,14 +16,17 @@ void COSGObject::InitOSG()
 {
 	this->InitSceneGraph();
 	this->InitCameraConfig();
+	this->InitOSGEarth();
 }
 void COSGObject::InitSceneGraph()
 {
 	mRoot = new osg::Group;
 	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\glider.osg";
-	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\heightfield\\tt.ive";
+	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\heightfield\\tt.ive";
+	std::string strFileName = "E:\\test\\osg\\earthFile\\china-simple6.earth";
 	osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(strFileName);
 	mRoot->addChild(node);
+	theMapNode = dynamic_cast<osgEarth::MapNode*> ( node.get() );
 }
 void COSGObject::InitCameraConfig()
 {
@@ -50,7 +53,7 @@ void COSGObject::InitCameraConfig()
 	camera->setNearFarRatio(0.000003f);
 
 	mViewer->setCamera(camera);
-	mViewer->setCameraManipulator(new osgGA::TrackballManipulator );
+	//mViewer->setCameraManipulator(new osgGA::TrackballManipulator );
 	mViewer->setSceneData(mRoot);
 	mViewer->realize();
 
@@ -80,4 +83,21 @@ void COSGObject::Render(void* ptr)
 osgViewer::Viewer* COSGObject::getViewer()
 {
 	return mViewer;
+}
+
+void COSGObject::InitOSGEarth()
+{
+	//初始化操作器
+	em = new osgEarth::Util::EarthManipulator;
+	em->getSettings()->setArcViewpointTransitions(true);
+	em->setNode(theMapNode);
+	mViewer->setCameraManipulator(em );
+	//初始化天空
+	osgEarth::Config skyConfig;
+	double hours = skyConfig.value("hours", 12.0);
+	osg::ref_ptr< osgEarth::Util::SkyNode> sky_node = new osgEarth::Util::SkyNode(theMapNode->getMap());
+	sky_node->setDateTime(2020,12,14,hours);
+	sky_node->attach(mViewer, 1 );
+	sky_node->setAmbientBrightness(1.0, mViewer);
+	mRoot->addChild(sky_node);
 }
