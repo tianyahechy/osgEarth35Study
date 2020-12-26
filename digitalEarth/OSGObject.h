@@ -7,6 +7,7 @@
 #include <osgEarthUtil/EarthManipulator>
 #include <osgEarthUtil/SkyNode>
 #include <osgEarth/ImageLayer>
+#include <osgEarthAnnotation/PlaceNode>
 class COSGObject
 {
 public:
@@ -33,6 +34,8 @@ public:
 	void removeChinaBoundary();
 	//加上国界线层
 	void addChinaBoundary();
+	//新增地标
+	void addLabel();
 private:
 	//句柄
 	HWND	m_hWnd;
@@ -43,5 +46,7 @@ private:
 
 	//国界线图层
 	osg::ref_ptr<osgEarth::ImageLayer> china_boundary;
+	//地标
+	osg::ref_ptr<osg::Group> _earthLabel;
 };
 

@@ -59,7 +59,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\lib;E:\tutorial\osg\000.ISO\35\builder\runtime\osgearth\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>osgd.lib;osgUtild.lib;osgviewerd.lib;osgDBd.lib;OpenThreadsd.lib;osgGAd.lib;osgEarthd.lib;osgEarthUtild.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>osgd.lib;osgUtild.lib;osgviewerd.lib;osgDBd.lib;OpenThreadsd.lib;osgGAd.lib;osgEarthd.lib;osgEarthUtild.lib;osgEarthAnnotationd.lib;osgEarthSymbologyd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

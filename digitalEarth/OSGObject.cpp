@@ -23,11 +23,15 @@ void COSGObject::InitSceneGraph()
 	mRoot = new osg::Group;
 	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\glider.osg";
 	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\heightfield\\tt.ive";
-	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\earthfile\\china-simple7.earth";
+	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\earthfile\\china-simple.earth";
 	//std::string strFileName = "E:\\test\\osg\\earthFile\\china-simple6.earth";
 	osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(strFileName);
 	mRoot->addChild(node);
 	theMapNode = dynamic_cast<osgEarth::MapNode*> ( node.get() );
+	//地标初始化
+	_earthLabel = new osg::Group;
+	mRoot->addChild(_earthLabel);
+	this->addLabel();
 }
 void COSGObject::InitCameraConfig()
 {
@@ -164,4 +168,28 @@ void COSGObject::addChinaBoundary()
 		theMapNode->getMap()->addImageLayer(china_boundary);
 	}
 	theApp._bNeedModify = false;
+}
+
+//新增地标
+void COSGObject::addLabel()
+{
+	osgEarth::Style theStyle;
+	osgEarth::Symbology::TextSymbol* textStyle = theStyle.getOrCreateSymbol<osgEarth::Symbology::TextSymbol> ();
+	//设置颜色
+	textStyle->fill()->color() = osg::Vec4f(1.0, 1.0, 1.0, 0.5 );
+	//设置边框
+	textStyle->halo()->color() = osg::Vec4f(0.0, 0.0, 0.0, 1.0 );
+	textStyle->font() = "simsun.ttc";
+	textStyle->size() = 20.0;
+
+
+	std::string strChinaICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\chinaIcon.jpg";
+	std::wstring strChinaTxt = L"中国";
+	osg::Vec3d posChina = osg::Vec3d(110, 34, 0 );
+	osg::ref_ptr<osg::Image> chinaImage = osgDB::readImageFile(strChinaICON);
+	osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn = new osgEarth::Annotation::PlaceNode(theMapNode, posChina, chinaImage, strChinaTxt,theStyle );
+	
+	_earthLabel->addChild(pn);
+	
+
 }
