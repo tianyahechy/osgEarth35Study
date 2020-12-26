@@ -55,6 +55,9 @@ CdigitalEarthApp::CdigitalEarthApp()
 
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
+
+	_bNeedModify = false;
+	_bCanModify = false;
 }
 
 // 唯一的一个 CdigitalEarthApp 对象

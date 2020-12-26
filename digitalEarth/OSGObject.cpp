@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "OSGObject.h"
-
+#include "digitalEarth.h"
 
 COSGObject::COSGObject(HWND hWnd)
 {
@@ -23,7 +23,8 @@ void COSGObject::InitSceneGraph()
 	mRoot = new osg::Group;
 	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\glider.osg";
 	//std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\heightfield\\tt.ive";
-	std::string strFileName = "E:\\test\\osg\\earthFile\\china-simple6.earth";
+	std::string strFileName = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\earthfile\\china-simple7.earth";
+	//std::string strFileName = "E:\\test\\osg\\earthFile\\china-simple6.earth";
 	osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(strFileName);
 	mRoot->addChild(node);
 	theMapNode = dynamic_cast<osgEarth::MapNode*> ( node.get() );
@@ -60,9 +61,18 @@ void COSGObject::InitCameraConfig()
 }
 void COSGObject::PreFrameUpdate()
 {
+	while(theApp._bNeedModify)
+	{
+		Sleep(1);
+	}
+	theApp._bCanModify = false;
 }
 void COSGObject::PostFrameUpdate()
 {
+	if(theApp._bNeedModify)
+	{
+		theApp._bCanModify = true;
+	}
 }
 
 //渲染线程
@@ -100,4 +110,58 @@ void COSGObject::InitOSGEarth()
 	sky_node->attach(mViewer, 1 );
 	sky_node->setAmbientBrightness(1.0, mViewer);
 	mRoot->addChild(sky_node);
+
+	//获取国界线图层
+	china_boundary = theMapNode->getMap()->getImageLayerByName("china_boundaries");
+	china_boundary->setOpacity(1.0);
+}
+
+void COSGObject::setChinaBoundaryOpacity(double opt)
+{
+	if(china_boundary)
+	{
+		china_boundary->setOpacity(opt);
+	}
+}
+
+double COSGObject::getChinaBoundaryOpacity()
+{
+	if(china_boundary)
+	{
+		return china_boundary->getOpacity();
+	}
+	else
+	{
+		return -1;
+	}
+
+}
+
+//移除国界线层
+void COSGObject::removeChinaBoundary()
+{
+	theApp._bNeedModify = true;
+	while(!theApp._bCanModify)
+	{
+		Sleep(1);
+	}
+	if(china_boundary)
+	{
+		theMapNode->getMap()->removeImageLayer(china_boundary);
+	}
+	theApp._bNeedModify = false;
+}
+//加上国界线层
+void COSGObject::addChinaBoundary()
+{
+	theApp._bNeedModify = true;
+	while(!theApp._bCanModify)
+	{
+		Sleep(1);
+	}
+	if(china_boundary)
+	{
+		theMapNode->getMap()->addImageLayer(china_boundary);
+	}
+	theApp._bNeedModify = false;
 }

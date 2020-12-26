@@ -6,6 +6,7 @@
 #include <osgEarth/mapNode>
 #include <osgEarthUtil/EarthManipulator>
 #include <osgEarthUtil/SkyNode>
+#include <osgEarth/ImageLayer>
 class COSGObject
 {
 public:
@@ -25,6 +26,13 @@ public:
 
 	void InitOSGEarth();
 
+	void setChinaBoundaryOpacity(double opt);
+	double getChinaBoundaryOpacity();
+	
+	//移除国界线层
+	void removeChinaBoundary();
+	//加上国界线层
+	void addChinaBoundary();
 private:
 	//句柄
 	HWND	m_hWnd;
@@ -32,5 +40,8 @@ private:
 	osg::ref_ptr<osg::Group> mRoot;
 	osg::ref_ptr<osgEarth::MapNode> theMapNode;
 	osg::ref_ptr<osgEarth::Util::EarthManipulator> em;
+
+	//国界线图层
+	osg::ref_ptr<osgEarth::ImageLayer> china_boundary;
 };
 

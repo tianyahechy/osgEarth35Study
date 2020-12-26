@@ -21,6 +21,7 @@
 
 #include "digitalEarthDoc.h"
 #include "digitalEarthView.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,6 +38,10 @@ BEGIN_MESSAGE_MAP(CdigitalEarthView, CView)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
+	ON_COMMAND(ID_szgjx, &CdigitalEarthView::Onszgjx)
+	ON_COMMAND(ID_xianshi, &CdigitalEarthView::Onxianshi)
+	ON_COMMAND(ID_toumingdu, &CdigitalEarthView::Ontoumingdu)
+	ON_UPDATE_COMMAND_UI(ID_xianshi, &CdigitalEarthView::OnUpdatexianshi)
 END_MESSAGE_MAP()
 
 // CdigitalEarthView 构造/析构
@@ -46,6 +51,8 @@ CdigitalEarthView::CdigitalEarthView()
 	// TODO: 在此处添加构造代码
 	mOSG = 0;
 	mThreadHandle = 0;
+	_bShowChinaBoundary = true;
+	mChinaBoundariesOpt = 1.0;
 }
 
 CdigitalEarthView::~CdigitalEarthView()
@@ -158,4 +165,69 @@ void CdigitalEarthView::OnInitialUpdate()
 	// TODO: 在此添加专用代码和/或调用基类
 	mOSG->InitOSG();
 	mThreadHandle = (HANDLE) _beginthread(&COSGObject::Render, 0, mOSG );
+}
+
+
+void CdigitalEarthView::Onszgjx()
+{
+	// TODO: 在此添加命令处理程序代码
+	CdigitalEarthApp* pApp = ( CdigitalEarthApp*) AfxGetApp();
+	CMainFrame* pWnd = ( CMainFrame*) pApp->GetMainWnd();
+	CMFCRibbonEdit* editt = dynamic_cast<CMFCRibbonEdit*> (pWnd->GetRibbonBar()->FindByID(ID_toumingdu));
+	if(!editt)
+	{
+		return;
+	}
+	
+	CString cstr = editt->GetEditText();
+	std::string str(cstr.GetBuffer());
+	double opt = std::atof(str.c_str());
+	if(opt < 0)
+	{
+		MessageBox("错误", "透明度必须为数字且为浮点值", MB_OK | MB_ICONERROR);
+		cstr.Format("%f", mChinaBoundariesOpt);
+		editt->SetEditText(cstr);
+	}
+	else
+	{
+		mChinaBoundariesOpt = opt;
+		mOSG->setChinaBoundaryOpacity(opt);
+	}
+	
+}
+
+
+void CdigitalEarthView::Onxianshi()
+{
+	theApp._bNeedModify = TRUE;
+	while(!theApp._bCanModify)
+	{
+		Sleep(1);
+	}
+	
+	// TODO: 在此添加命令处理程序代码
+	_bShowChinaBoundary = !_bShowChinaBoundary;
+	if(_bShowChinaBoundary)
+	{
+		mOSG->removeChinaBoundary();
+	}
+	else
+	{
+		mOSG->addChinaBoundary();
+	}
+	theApp._bNeedModify = false;
+}
+
+
+void CdigitalEarthView::Ontoumingdu()
+{
+	// TODO: 在此添加命令处理程序代码
+
+}
+
+
+void CdigitalEarthView::OnUpdatexianshi(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(_bShowChinaBoundary);
 }

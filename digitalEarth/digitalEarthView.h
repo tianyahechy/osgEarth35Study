@@ -29,6 +29,8 @@ public:
 public:
 	COSGObject* mOSG;
 	HANDLE mThreadHandle;
+	double mChinaBoundariesOpt;
+
 // 操作
 public:
 
@@ -59,6 +61,19 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnDestroy();
 	virtual void OnInitialUpdate();
+	afx_msg void OnChinaBound();
+	afx_msg void OnSetChinaBound();
+	afx_msg void OnShowChinabound();
+	afx_msg void Onsetchinabound();
+	afx_msg void Onszgjx();
+	afx_msg void Onxianshi();
+	afx_msg void Ontoumingdu();
+
+public:
+	//是否显示国界线
+	bool _bShowChinaBoundary;
+	afx_msg void OnUpdatexianshi(CCmdUI *pCmdUI);
+	
 };
 
 #ifndef _DEBUG  // digitalEarthView.cpp 中的调试版本

@@ -43,6 +43,11 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+
+public:
+	//解决资源同抢问题
+	bool _bNeedModify;
+	bool _bCanModify;
 };
 
 extern CdigitalEarthApp theApp;
