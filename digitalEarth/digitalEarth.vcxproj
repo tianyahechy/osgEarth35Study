@@ -80,12 +80,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\include;E:\tutorial\osg\000.ISO\35\builder\runtime\osgearth\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>E:\tutorial\osg\000.ISO\35\builder\runtime\osg3.0\lib;E:\tutorial\osg\000.ISO\35\builder\runtime\osgearth\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>osg.lib;osgUtil.lib;osgviewer.lib;osgDB.lib;OpenThreads.lib;osgGA.lib;osgEarth.lib;osgEarthUtil.lib;osgEarthAnnotation.lib;osgEarthSymbology.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
