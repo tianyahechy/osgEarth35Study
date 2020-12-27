@@ -2,6 +2,23 @@
 #include "OSGObject.h"
 #include "digitalEarth.h"
 
+
+static std::wstring s2ws(const std::string &s)
+{
+    size_t i;
+    std::string curLocale = setlocale(LC_ALL, NULL);
+    setlocale(LC_ALL, "chs");
+    const char* _source = s.c_str();
+    size_t _dsize = s.size() + 1;
+    wchar_t* _dest = new wchar_t[_dsize];
+    wmemset(_dest, 0x0, _dsize);
+    mbstowcs_s(&i, _dest, _dsize, _source, _dsize);
+    std::wstring result = _dest;
+    delete[] _dest;
+    setlocale(LC_ALL, curLocale.c_str());
+    return result;
+}
+
 COSGObject::COSGObject(HWND hWnd)
 {
 	m_hWnd = hWnd;
@@ -182,14 +199,124 @@ void COSGObject::addLabel()
 	textStyle->font() = "simsun.ttc";
 	textStyle->size() = 20.0;
 
-
+	//图标
 	std::string strChinaICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\chinaIcon.jpg";
-	std::wstring strChinaTxt = L"中国";
-	osg::Vec3d posChina = osg::Vec3d(110, 34, 0 );
+	std::string strCityCenterICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon25.png";
+	std::string strCityICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon26.png";
+	std::string strCountryCityICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon25.png";
+	std::string strCountryICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon25.png";
+	std::string strTownICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon10.png";
+	std::string strVIICON = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\image\\label\\icon4.png";
 	osg::ref_ptr<osg::Image> chinaImage = osgDB::readImageFile(strChinaICON);
-	osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn = new osgEarth::Annotation::PlaceNode(theMapNode, posChina, chinaImage, strChinaTxt,theStyle );
+	osg::ref_ptr<osg::Image> CityCenterImage = osgDB::readImageFile(strCityCenterICON);
+	osg::ref_ptr<osg::Image> CityImage = osgDB::readImageFile(strCityICON);
+	osg::ref_ptr<osg::Image> CountryCityImage = osgDB::readImageFile(strCountryCityICON);
+	osg::ref_ptr<osg::Image> CountryImage = osgDB::readImageFile(strCountryICON);
+	osg::ref_ptr<osg::Image> TownImage = osgDB::readImageFile(strTownICON);
+	osg::ref_ptr<osg::Image> VIImage = osgDB::readImageFile(strVIICON);
 	
+	//文字
+	std::wstring wstrChinaTxt = L"中国";
+	std::wstring wstrCityCenterTxt = L"省会";
+	std::wstring wstrCityTxt = L"市";
+	std::wstring wstrCountryCityTxt = L"区";
+	std::wstring wstrCountryTxt = L"县";
+	std::wstring wstrTownTxt = L"镇";
+	std::wstring wstrVITxt = L"村";
+	
+
+	osg::Vec3d posChina = osg::Vec3d(110, 34, 0 );
+	osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn = new osgEarth::Annotation::PlaceNode(theMapNode, posChina, chinaImage, wstrChinaTxt,theStyle );
 	_earthLabel->addChild(pn);
+
+	//添加陕西地名
+	std::string strShaanxiText = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\label\\txt\\shaanxi.txt";
+	std::fstream f( strShaanxiText, std::ios::in);
+	char name[128];
+	wchar_t wname[128];
+	char area[256];
+	int level;
+	float lon;
+	float lat;
+	int totalNumber;
+	//f>>totalNumber;
+	osg::ref_ptr<osg::Image> imageUse;
+	std::wstring wstrTxtUse;
+	for(int i = 0; i < 37937;i++)
+	{
+		f>>name>>area>>level>>lon>>lat;
 	
+		osg::Vec3d center;
+		theMapNode->getMap()->mapPointToWorldPoint(osg::Vec3(lon, lat, 0), center );
+		osg::ref_ptr<osg::LOD> lod = new osg::LOD;
+		lod->setCenterMode(osg::LOD::USER_DEFINED_CENTER);
+		lod->setCenter(center);
+		
+		long dist;
+		switch( level )
+		{
+		case 16:
+			{
+				dist = 500000;
+				imageUse = CityCenterImage;
+				wstrTxtUse = wstrCityCenterTxt;
+			}
+			break;
+
+		case 64:
+			{
+				dist = 100000;
+				imageUse = CityImage;
+				wstrTxtUse = wstrCityTxt;
+			}
+			break;
+
+		case 256:
+			{
+				dist = 50000;
+				imageUse = CountryCityImage;
+				wstrTxtUse = wstrCountryCityTxt;
+			}
+			break;
+
+		case 512:
+			{
+				dist = 25000;
+				imageUse = CountryImage;
+				wstrTxtUse = wstrCountryTxt;
+				
+			}
+			break;
+
+		case 1024:
+			{
+				dist = 12000;
+				imageUse = TownImage;
+				wstrTxtUse = wstrTownTxt;
+			}
+			break;
+		case 4096:
+			{
+				dist = 6000;
+				imageUse = VIImage;
+				wstrTxtUse = wstrVITxt;
+			}
+			break;
+			
+		default:
+			{
+				dist = 10;
+				imageUse = CityCenterImage;
+				wstrTxtUse = wstrCityCenterTxt;
+			}
+			break;
+		}
+		//将地名取出，转换成宽字符
+		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, 128, wname, 128 );
+		osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn2 = new osgEarth::Annotation::PlaceNode(theMapNode,osg::Vec3d(lon, lat, 0) , imageUse, wstrTxtUse,theStyle );
+		lod->addChild(pn2, 0, dist);
+		_earthLabel->addChild(lod);
+	}
+	f.close();
 
 }
