@@ -229,8 +229,9 @@ void COSGObject::addLabel()
 	osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn = new osgEarth::Annotation::PlaceNode(theMapNode, posChina, chinaImage, wstrChinaTxt,theStyle );
 	_earthLabel->addChild(pn);
 
-	//添加陕西地名
-	strShaanxiText = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\label\\txt\\shaanxi.txt";
+	//添加陕西地名	
+	//strShaanxiText = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\label\\txt\\shaanxi.txt";
+	strShaanxiText = "E:/tutorial/osg/000.ISO/35/builder/data/label/txt/shaanxi.txt";
 	shaanxiParam[0] = (unsigned int) this;
 	shaanxiParam[1] = (unsigned int)& strShaanxiText;
 	shaanxiParam[2] = 37937;
@@ -360,10 +361,10 @@ void COSGObject::ReadLabelThread(void* ptr)
 void COSGObject::CreateLabelThread(void* ptr)
 {	
 	theApp._bNeedModify = true;
-	while(!theApp._bCanModify)
-	{
-		Sleep(1);
-	}
+	//while(!theApp._bCanModify)
+	//{
+		//Sleep(1);
+	//}
 	unsigned int * tempArray = (unsigned int*) ptr;
 	//参数0
 	COSGObject* cOsg = (COSGObject*) tempArray[0];
@@ -374,9 +375,16 @@ void COSGObject::CreateLabelThread(void* ptr)
 	//参数3，地标输出文件路径
 	std::string* fileOutputPath = (std::string*) tempArray[3];
 	//临时变量
-	std::string strCenterFileName;
+	fileOutputPath->pop_back();
+	fileOutputPath->pop_back();
+	fileOutputPath->pop_back();
+	fileOutputPath->pop_back();
+	fileOutputPath->pop_back();
+	std::string outputPath = * fileOutputPath;
+	outputPath += "center.center";
 
 	std::fstream f( fileInputPath->c_str(), std::ios::in);
+	std::fstream fou( outputPath.c_str(), std::ios::out);
 	char name[128];
 	wchar_t wname[128];
 	char area[256];
@@ -388,15 +396,16 @@ void COSGObject::CreateLabelThread(void* ptr)
 	
 	std::wstring wstrTxtUse;
 	char iTemp[10];
-	char iTempOut[256];
-	for(int i = 0; i < count;i = i+100)
+	char iFout[256];
+	int currentBatchID = 0;
+	int nodeID = 0;
+	for(int currentBatchID = 0; currentBatchID < count/100 + 1;currentBatchID++)
 	{
 		int j = 0;
 		osg::ref_ptr<osg::Group> gp = new osg::Group;
-		while(j<100 && i < count)
+		while(j<100 && nodeID < count)
 		{
-			j++;
-			i++;
+
 			f>>name>>area>>level>>lon>>lat;
 	
 			osg::Vec3d center;
@@ -461,18 +470,20 @@ void COSGObject::CreateLabelThread(void* ptr)
 				}
 				break;
 			}
-			sprintf(iTemp, "%d", i);
-			//sprintf(iTempout
+			sprintf(iTemp, "%d", nodeID);
+			sprintf(iFout, "%.0f %.0f %.0f %ld\n", center.x(), center.y(), center.z(), dist);
+			fou << iFout;
 			std::string strOutIve =*fileOutputPath + iTemp+ ".ive";
 			//将地名取出，转换成宽字符
 			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, 128, wname, 128 );
 			osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn2 = new osgEarth::Annotation::PlaceNode(cOsg->theMapNode,osg::Vec3d(lon, lat, 0) , imageUse, wstrTxtUse, cOsg->theStyle );
 			osgDB::Registry::instance()->writeNode(*pn2,strOutIve,osgDB::Registry::instance()->getOptions());
+			j++;
+			nodeID++;
 		}
-
-
 	}
 	f.close();
-	theApp._bNeedModify = false;
+	fou.close();
+	//theApp._bNeedModify = false;
 	_endthread();
 }

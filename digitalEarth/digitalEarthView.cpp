@@ -54,7 +54,7 @@ CdigitalEarthView::CdigitalEarthView()
 	mThreadHandle = 0;
 	_bShowChinaBoundary = true;
 	mChinaBoundariesOpt = 1.0;
-	ct = new CLABELTOOLS;
+	ct = 0;
 }
 
 CdigitalEarthView::~CdigitalEarthView()

@@ -24,6 +24,10 @@ protected:
 public:
 	afx_msg void OnBnClickedLabelHandle();
 
+	void setOSG(COSGObject * cosg)
+	{
+		_cosg = cosg;
+	}
 public:
 	//²ÎÊý0
 	COSGObject * _cosg;

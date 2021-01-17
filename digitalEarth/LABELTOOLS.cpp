@@ -44,6 +44,7 @@ END_MESSAGE_MAP()
 
 void CLABELTOOLS::OnBnClickedLabelHandle()
 {
+	_count = 37937;
 	iParam[0] = (unsigned int) _cosg;
 	iParam[1] = (unsigned int)& _inputLabelPath;
 	iParam[2] = _count;
