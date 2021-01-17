@@ -120,6 +120,7 @@
     <ClInclude Include="digitalEarth.h" />
     <ClInclude Include="digitalEarthDoc.h" />
     <ClInclude Include="digitalEarthView.h" />
+    <ClInclude Include="LABELTOOLS.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OSGObject.h" />
     <ClInclude Include="Resource.h" />
@@ -130,6 +131,7 @@
     <ClCompile Include="digitalEarth.cpp" />
     <ClCompile Include="digitalEarthDoc.cpp" />
     <ClCompile Include="digitalEarthView.cpp" />
+    <ClCompile Include="LABELTOOLS.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OSGObject.cpp" />
     <ClCompile Include="stdafx.cpp">

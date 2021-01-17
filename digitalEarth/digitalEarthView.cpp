@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CdigitalEarthView, CView)
 	ON_COMMAND(ID_xianshi, &CdigitalEarthView::Onxianshi)
 	ON_COMMAND(ID_toumingdu, &CdigitalEarthView::Ontoumingdu)
 	ON_UPDATE_COMMAND_UI(ID_xianshi, &CdigitalEarthView::OnUpdatexianshi)
+	ON_COMMAND(ID_dbycl, &CdigitalEarthView::Ondbycl)
 END_MESSAGE_MAP()
 
 // CdigitalEarthView 构造/析构
@@ -53,6 +54,7 @@ CdigitalEarthView::CdigitalEarthView()
 	mThreadHandle = 0;
 	_bShowChinaBoundary = true;
 	mChinaBoundariesOpt = 1.0;
+	ct = new CLABELTOOLS;
 }
 
 CdigitalEarthView::~CdigitalEarthView()
@@ -230,4 +232,15 @@ void CdigitalEarthView::OnUpdatexianshi(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(_bShowChinaBoundary);
+}
+
+
+void CdigitalEarthView::Ondbycl()
+{
+	// TODO: 在此添加命令处理程序代码
+	if(!ct)
+	{
+		ct = new CLABELTOOLS(0, mOSG);
+	}
+	ct->DoModal();
 }

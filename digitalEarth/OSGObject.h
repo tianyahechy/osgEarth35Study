@@ -8,6 +8,8 @@
 #include <osgEarthUtil/SkyNode>
 #include <osgEarth/ImageLayer>
 #include <osgEarthAnnotation/PlaceNode>
+#include "LABELTOOLS.h"
+
 class COSGObject
 {
 public:
@@ -41,6 +43,7 @@ public:
 	//2,指针文件名
 	//3,地标数量
 	static void ReadLabelThread(void* ptr);
+	static void CreateLabelThread(void* ptr);
 private:
 	//句柄
 	HWND	m_hWnd;
@@ -83,8 +86,9 @@ private:
 	
 	unsigned int shaanxiParam[3];
 	std::string strShaanxiText; 
+
+public:
+	unsigned int _processI;
 	
-	unsigned int shanxiParam[3];
-	std::string strShanxiText; 
 };
 

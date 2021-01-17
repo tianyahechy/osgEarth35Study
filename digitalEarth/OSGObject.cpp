@@ -22,6 +22,7 @@ static std::wstring s2ws(const std::string &s)
 COSGObject::COSGObject(HWND hWnd)
 {
 	m_hWnd = hWnd;
+	_processI = 0;
 }
 
 
@@ -234,7 +235,6 @@ void COSGObject::addLabel()
 	shaanxiParam[1] = (unsigned int)& strShaanxiText;
 	shaanxiParam[2] = 37937;
 	(HANDLE)_beginthread(&COSGObject::ReadLabelThread, 0, (void*) shaanxiParam);
-	
 
 
 }
@@ -262,6 +262,7 @@ void COSGObject::ReadLabelThread(void* ptr)
 	
 	for(int i = 0; i < count;i = i+100)
 	{
+		cOsg->_processI = i;
 		int j = 0;
 		osg::ref_ptr<osg::Group> gp = new osg::Group;
 		while(j<100 && i < count)
@@ -353,5 +354,125 @@ void COSGObject::ReadLabelThread(void* ptr)
 		Sleep(10);
 	}
 	f.close();
+	_endthread();
+}
+
+void COSGObject::CreateLabelThread(void* ptr)
+{	
+	theApp._bNeedModify = true;
+	while(!theApp._bCanModify)
+	{
+		Sleep(1);
+	}
+	unsigned int * tempArray = (unsigned int*) ptr;
+	//参数0
+	COSGObject* cOsg = (COSGObject*) tempArray[0];
+	//参数1,地标输入文件路径
+	std::string* fileInputPath = (std::string*) tempArray[1];
+	//参数2，地标数量
+	unsigned int count = tempArray[2];
+	//参数3，地标输出文件路径
+	std::string* fileOutputPath = (std::string*) tempArray[3];
+	//临时变量
+	std::string strCenterFileName;
+
+	std::fstream f( fileInputPath->c_str(), std::ios::in);
+	char name[128];
+	wchar_t wname[128];
+	char area[256];
+	int level;
+	float lon;
+	float lat;
+	
+	osg::ref_ptr<osg::Image> imageUse = 0;
+	
+	std::wstring wstrTxtUse;
+	char iTemp[10];
+	char iTempOut[256];
+	for(int i = 0; i < count;i = i+100)
+	{
+		int j = 0;
+		osg::ref_ptr<osg::Group> gp = new osg::Group;
+		while(j<100 && i < count)
+		{
+			j++;
+			i++;
+			f>>name>>area>>level>>lon>>lat;
+	
+			osg::Vec3d center;
+			cOsg->theMapNode->getMap()->mapPointToWorldPoint(osg::Vec3(lon, lat, 0), center );
+		
+			long dist;
+			switch( level )
+			{
+			case 16:
+				{
+					dist = 500000;
+					imageUse = cOsg->CityCenterImage;
+					wstrTxtUse = cOsg->wstrCityCenterTxt;
+				}
+				break;
+
+			case 64:
+				{
+					dist = 100000;
+					imageUse = cOsg->CityImage;
+					wstrTxtUse = cOsg->wstrCityTxt;
+				}
+				break;
+
+			case 256:
+				{
+					dist = 50000;
+					imageUse = cOsg->CountryCityImage;
+					wstrTxtUse = cOsg->wstrCountryCityTxt;
+				}
+				break;
+
+			case 512:
+				{
+					dist = 25000;
+					imageUse = cOsg->CountryImage;
+					wstrTxtUse = cOsg->wstrCountryTxt;
+				
+				}
+				break;
+
+			case 1024:
+				{
+					dist = 12000;
+					imageUse = cOsg->TownImage;
+					wstrTxtUse = cOsg->wstrTownTxt;
+				}
+				break;
+			case 4096:
+				{
+					dist = 6000;
+					imageUse = cOsg->VIImage;
+					wstrTxtUse = cOsg->wstrVITxt;
+				}
+				break;
+			
+			default:
+				{
+					dist = 10;
+					imageUse = cOsg->CityCenterImage;
+					wstrTxtUse = cOsg->wstrCityCenterTxt;
+				}
+				break;
+			}
+			sprintf(iTemp, "%d", i);
+			//sprintf(iTempout
+			std::string strOutIve =*fileOutputPath + iTemp+ ".ive";
+			//将地名取出，转换成宽字符
+			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, 128, wname, 128 );
+			osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn2 = new osgEarth::Annotation::PlaceNode(cOsg->theMapNode,osg::Vec3d(lon, lat, 0) , imageUse, wstrTxtUse, cOsg->theStyle );
+			osgDB::Registry::instance()->writeNode(*pn2,strOutIve,osgDB::Registry::instance()->getOptions());
+		}
+
+
+	}
+	f.close();
+	theApp._bNeedModify = false;
 	_endthread();
 }

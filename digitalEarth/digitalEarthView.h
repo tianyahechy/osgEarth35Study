@@ -15,6 +15,7 @@
 #pragma once
 #include "digitalEarthDoc.h"
 #include "OSGObject.h"
+#include "LABELTOOLS.h"
 
 class CdigitalEarthView : public CView
 {
@@ -74,6 +75,10 @@ public:
 	bool _bShowChinaBoundary;
 	afx_msg void OnUpdatexianshi(CCmdUI *pCmdUI);
 	
+	afx_msg void Ondbycl();
+
+private:
+	CLABELTOOLS * ct;
 };
 
 #ifndef _DEBUG  // digitalEarthView.cpp 中的调试版本
