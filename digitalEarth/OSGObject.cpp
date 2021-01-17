@@ -216,6 +216,30 @@ void COSGObject::addLabel()
 	TownImage = osgDB::readImageFile(strTownICON);
 	VIImage = osgDB::readImageFile(strVIICON);
 	
+	std::string strFileDir = "d:/delete/";
+	std::string strCenterFile = strFileDir + "center.center";
+	char tempChar[256];
+	std::fstream fin(strCenterFile, std::ios::in);
+	for(int index = 0; index < 37937; index++)
+	{
+		//读取模型
+		sprintf(tempChar, "%d.ive", index );
+		std::string strIve = strFileDir + tempChar ;
+		osg::ref_ptr<osg::PagedLOD> pLod = new osg::PagedLOD;
+		pLod->setFileName(0, strIve );
+		//读取center和dist
+		double x;
+		double y;
+		double z;
+		double dist;
+		fin >> x >> y >> z >> dist;
+		pLod->setCenter(osg::Vec3d(x,y,z));
+		pLod->setRange(0, 0, dist );
+		pLod->setCenterMode(osg::LOD::USER_DEFINED_CENTER);
+		_earthLabel->addChild(pLod);
+
+	}
+	/*
 	//文字
 	wstrChinaTxt = L"中国";
 	wstrCityCenterTxt = L"省会";
@@ -229,6 +253,7 @@ void COSGObject::addLabel()
 	osg::ref_ptr<osgEarth::Annotation::PlaceNode> pn = new osgEarth::Annotation::PlaceNode(theMapNode, posChina, chinaImage, wstrChinaTxt,theStyle );
 	_earthLabel->addChild(pn);
 
+	
 	//添加陕西地名	
 	//strShaanxiText = "E:\\tutorial\\osg\\000.ISO\\35\\builder\\data\\label\\txt\\shaanxi.txt";
 	strShaanxiText = "E:/tutorial/osg/000.ISO/35/builder/data/label/txt/shaanxi.txt";
@@ -236,7 +261,7 @@ void COSGObject::addLabel()
 	shaanxiParam[1] = (unsigned int)& strShaanxiText;
 	shaanxiParam[2] = 37937;
 	(HANDLE)_beginthread(&COSGObject::ReadLabelThread, 0, (void*) shaanxiParam);
-
+	*/
 
 }
 void COSGObject::ReadLabelThread(void* ptr)
